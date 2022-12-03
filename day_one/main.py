@@ -17,7 +17,7 @@ def input_lines(input_filename: str) -> Generator[Optional[int], None, None]:
 # Index 1 = total calories for elf #2
 elf_food_supply = []
 running_total = 0
-for line in input_lines("input.txt"):
+for line in input_lines("../inputs/day_one.txt"):
     if line is None:
         elf_food_supply.append(running_total)
         running_total = 0
