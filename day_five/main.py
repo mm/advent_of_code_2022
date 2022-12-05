@@ -9,7 +9,7 @@ class Instruction:
 
 def input_instructions(input_filename: str, start_at_line: int) -> Generator[Optional[Instruction], None, None]:
     """
-    Successively returns integers from the input file. Blank lines return as None.
+    Successively returns instructions from the input file. Blank lines return as None.
     """
     with open(input_filename, "r") as in_file:
         i = 0
@@ -69,14 +69,36 @@ def build_crate_stacks(input_filename: str) -> List[List[str]]:
 
 
 all_crate_stacks = build_crate_stacks("../inputs/day_five.txt")
-for instruction in input_instructions("../inputs/day_five.txt", start_at_line=10):
-    # Execute the crane moving instructions to move crates from one stack to another.
-    actual_target = instruction.target - 1
-    actual_destination = instruction.destination - 1
-    # Since these are stacks, the "moves" are just pops off the top, sequentially:
-    if instruction.amount >= 1:
-        for _ in range(0, instruction.amount):
-            crate_popped = all_crate_stacks[actual_target].pop()
-            all_crate_stacks[actual_destination].append(crate_popped)
+
+def crate_mover_9000(crate_stacks: List[List[str]]):
+    for instruction in input_instructions("../inputs/day_five.txt", start_at_line=10):
+        # Execute the crane moving instructions to move crates from one stack to another.
+        actual_target = instruction.target - 1
+        actual_destination = instruction.destination - 1
+        # Since these are stacks, the "moves" are just pops off the top, sequentially:
+        if instruction.amount >= 1:
+            for _ in range(0, instruction.amount):
+                crate_popped = crate_stacks[actual_target].pop()
+                crate_stacks[actual_destination].append(crate_popped)
     
-print(''.join([stack[-1] for stack in all_crate_stacks]))
+    print(''.join([stack[-1] for stack in all_crate_stacks]))
+
+def crate_mover_9001(crate_stacks: List[List[str]]):
+    for instruction in input_instructions("../inputs/day_five.txt", start_at_line=10):
+        # Execute the crane moving instructions to move crates from one stack to another.
+        actual_target = instruction.target - 1
+        actual_destination = instruction.destination - 1
+        if instruction.amount >= 1:
+            # In this case, we aren't just popping off the top and adding. Rather, we want to preserve
+            # the order of the crates we're adding and adding them as a group -- so we create a list of
+            # crates to add and add them in reverse order.
+            crates_to_add = []
+            for _ in range(0, instruction.amount):
+                crate_popped = crate_stacks[actual_target].pop()
+                crates_to_add.append(crate_popped)
+            crate_stacks[actual_destination].extend(reversed(crates_to_add))
+    
+    print(''.join([stack[-1] for stack in all_crate_stacks]))
+
+# crate_mover_9000(all_crate_stacks)
+crate_mover_9001(all_crate_stacks)
